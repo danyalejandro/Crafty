@@ -14,6 +14,18 @@
         mobile = /iPad|iPod|iPhone|Android|webOS|IEMobile/i.exec(ua);
 
     /**@
+    * #Crafty.cocoonjsMode
+    * 
+    * If Crafty.cocoonjsMode equals true, applies some hacks to facilitate use with CocoonJS:
+    * ~~~
+    * - remove manipulation of META tags in the <head> (no HTML skeleton available, resulting in full crash)
+    * ~~~
+    * 
+    */
+    Crafty.cocoonjsMode = false;
+
+
+    /**@
     * #Crafty.mobile
     * @comp Crafty.device
     * 
@@ -948,20 +960,23 @@ Crafty.extend({
                     head = document.getElementsByTagName("HEAD")[0];
 
                 //stop mobile zooming and scrolling
-                meta.setAttribute("name", "viewport");
-                meta.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no");
-                head.appendChild(meta);
+                if (Crafty.cocoonjsMode === false) {
+                    meta.setAttribute("name", "viewport");
+                    meta.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no");
+                    head.appendChild(meta);
 
-                //hide the address bar
-                meta = document.createElement("meta");
-                meta.setAttribute("name", "apple-mobile-web-app-capable");
-                meta.setAttribute("content", "yes");
-                head.appendChild(meta);
-                setTimeout(function () { window.scrollTo(0, 1); }, 0);
+                    //hide the address bar
+                    meta = document.createElement("meta");
+                    meta.setAttribute("name", "apple-mobile-web-app-capable");
+                    meta.setAttribute("content", "yes");
+                    head.appendChild(meta);
+                    setTimeout(function () { window.scrollTo(0, 1); }, 0);
 
-                Crafty.addEvent(this, window, "touchmove", function (e) {
-                    e.preventDefault();
-                });
+                    Crafty.addEvent(this, window, "touchmove", function (e) {
+                        e.preventDefault();
+                    });
+                }
+                
 
                 Crafty.stage.x = 0;
                 Crafty.stage.y = 0;
